@@ -1,0 +1,56 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Arial, sans-serif; color: #1d2523; background: #f4f6f5; display: flex; flex-direction: column; min-height: 100vh; }
+a { color: #0f6b66; }
+
+/* Navbar */
+.navbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; padding: 12px 20px; background: #0f6b66; color: #fff; }
+.navbar a { color: #fff; }
+.navbar .brand { font-weight: bold; font-size: 1.1rem; text-decoration: none; }
+.navbar-right { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-size: .9rem; }
+.navbar .demo { background: rgba(255,255,255,.15); padding: 3px 8px; border-radius: 4px; font-size: .8rem; }
+
+/* Layout */
+.layout { display: flex; flex: 1; }
+.sidebar { width: 210px; flex: none; background: #fff; border-right: 1px solid #d5dbd9; padding: 14px 10px; }
+.sidebar a { display: block; padding: 8px 12px; margin-bottom: 3px; border-radius: 4px; color: #1d2523; text-decoration: none; }
+.sidebar a:hover { background: #e7ebe9; }
+.sidebar a.active { background: #d9eeec; color: #0f6b66; font-weight: bold; }
+.sidebar .grup { margin: 14px 12px 4px; font-size: .75rem; color: #6b7573; }
+.content { flex: 1; min-width: 0; padding: 20px 24px; }
+.content h1 { margin-top: 0; }
+
+/* Footer */
+.footer { text-align: center; padding: 12px; font-size: .8rem; color: #6b7573; border-top: 1px solid #d5dbd9; background: #fff; }
+.footer p { margin: 0; }
+
+/* Komponen */
+.ringkasan { display: flex; gap: 12px; flex-wrap: wrap; margin: 16px 0; }
+.kotak { flex: 1; min-width: 130px; background: #fff; border: 1px solid #d5dbd9; padding: 12px 14px; border-radius: 6px; }
+.kotak span { display: block; font-size: .85rem; color: #6b7573; }
+.kotak strong { font-size: 1.7rem; }
+table { width: 100%; border-collapse: collapse; background: #fff; }
+th, td { border: 1px solid #d5dbd9; padding: 8px 10px; text-align: left; }
+th { background: #e7ebe9; }
+.btn { display: inline-block; padding: 8px 16px; background: #0f6b66; color: #fff; border: 1px solid #0f6b66; border-radius: 4px; text-decoration: none; cursor: pointer; font-size: .95rem; }
+.btn-outline { background: #fff; color: #0f6b66; }
+.badge { padding: 2px 9px; border-radius: 10px; font-size: .78rem; }
+.badge-tunggu { background: #f1e2b8; }
+.badge-proses { background: #cfe3f5; }
+.badge-selesai { background: #d3ecd5; }
+.badge-tolak { background: #f4d2d2; }
+.alert { background: #d3ecd5; padding: 10px 14px; border-radius: 4px; margin-bottom: 14px; }
+.alert-error { background: #f4d2d2; }
+
+/* Form */
+.form { max-width: 560px; }
+.form label { display: block; margin: 12px 0 4px; font-weight: bold; }
+.form input[type="text"], .form select, .form textarea { width: 100%; padding: 8px; border: 1px solid #9aa5a2; border-radius: 4px; font: inherit; }
+.form .aksi { margin-top: 18px; display: flex; gap: 8px; }
+
+/* Responsif */
+@media (max-width: 700px) {
+    .layout { flex-direction: column; }
+    .sidebar { width: 100%; border-right: 0; border-bottom: 1px solid #d5dbd9; display: flex; flex-wrap: wrap; gap: 4px; }
+    .sidebar .grup { display: none; }
+    .content { padding: 14px; overflow-x: auto; }
+}
