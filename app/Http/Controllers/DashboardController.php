@@ -3,41 +3,50 @@
 namespace App\Http\Controllers;
 
 use App\Models\Report;
-use App\Models\User;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // SEMENTARA: role dari session demo. Nanti diganti auth()->user()->role
-        $role = session('role', 'pelapor');
+        $pengguna = auth()->user();
+        $admin = $pengguna->isAdmin();
+        $role = $admin ? 'admin' : 'pelapor';
 
-        if ($role === 'admin') {
-            $dasar = Report::query();
-            $laporan = Report::with(['user', 'location'])
-                ->where('status', 'menunggu')->latest()->take(5)->get();
-        } else {
-            // SEMENTARA: pelapor demo = mahasiswa pertama di tabel users
-            $pelapor = User::where('role', 'mahasiswa')->first();
-            $dasar = Report::where('user_id', $pelapor?->id);
-            $laporan = Report::with(['user', 'location'])
-                ->where('user_id', $pelapor?->id)->latest()->take(5)->get();
+        // Admin melihat seluruh laporan, pelapor hanya laporannya sendiri
+        $dasar = $admin ? Report::query() : Report::where('user_id', $pengguna->id);
+
+        $perStatus = (clone $dasar)->selectRaw('status, count(*) as total')->groupBy('status')->pluck('total', 'status');
+        $n = fn ($status) => (int) ($perStatus[$status] ?? 0);
+        $total = (int) $perStatus->sum();
+        $diproses = $n('diverifikasi') + $n('diproses');
+
+        $ringkasan = [
+            ['label' => 'Total laporan', 'nilai' => $total, 'ikon' => 'file-text', 'warna' => 'total'],
+            ['label' => $admin ? 'Menunggu verifikasi' : 'Menunggu', 'nilai' => $n('menunggu'), 'ikon' => 'clock', 'warna' => 'menunggu'],
+            ['label' => 'Sedang diproses', 'nilai' => $diproses, 'ikon' => 'tool', 'warna' => 'proses'],
+            ['label' => 'Selesai', 'nilai' => $n('selesai'), 'ikon' => 'check-circle', 'warna' => 'selesai'],
+        ];
+        if ($admin) {
+            $ringkasan[] = ['label' => 'Ditolak', 'nilai' => $n('ditolak'), 'ikon' => 'x-circle', 'warna' => 'ditolak'];
         }
 
-        $hitung = fn ($status) => (clone $dasar)->where('status', $status)->count();
-
-        $ringkasan = [['label' => 'Total laporan', 'nilai' => (clone $dasar)->count()]];
-        if ($role === 'admin') {
-            $ringkasan[] = ['label' => 'Menunggu verifikasi', 'nilai' => $hitung('menunggu')];
-            $ringkasan[] = ['label' => 'Diproses', 'nilai' => $hitung('diproses')];
-            $ringkasan[] = ['label' => 'Selesai', 'nilai' => $hitung('selesai')];
-            $ringkasan[] = ['label' => 'Ditolak', 'nilai' => $hitung('ditolak')];
-        } else {
-            $ringkasan[] = ['label' => 'Menunggu', 'nilai' => $hitung('menunggu')];
-            $ringkasan[] = ['label' => 'Diproses', 'nilai' => $hitung('diproses')];
-            $ringkasan[] = ['label' => 'Selesai', 'nilai' => $hitung('selesai')];
+        // Distribusi status (khusus dashboard admin)
+        $distribusi = [];
+        foreach (Report::STATUS as $kunci => $label) {
+            $distribusi[] = [
+                'kunci' => $kunci,
+                'label' => $label,
+                'nilai' => $n($kunci),
+                'persen' => $total ? round($n($kunci) / $total * 100) : 0,
+            ];
         }
 
-        return view('dashboard', compact('role', 'ringkasan', 'laporan'));
+        $laporan = $admin
+            ? Report::with(['user', 'location'])->where('status', 'menunggu')->latest()->take(5)->get()
+            : Report::with(['user', 'location'])->where('user_id', $pengguna->id)->latest()->take(5)->get();
+
+        $menunggu = $n('menunggu');
+
+        return view('dashboard', compact('role', 'pengguna', 'ringkasan', 'distribusi', 'laporan', 'menunggu', 'total'));
     }
 }

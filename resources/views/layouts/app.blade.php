@@ -7,20 +7,37 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 <body>
-    @include('partials.navbar')
-
-    <div class="layout">
+    <div class="app">
         @include('partials.sidebar')
 
-        <main class="content">
-            @if (session('sukses'))
-                <div class="alert">{{ session('sukses') }}</div>
-            @endif
+        <div class="main">
+            @include('partials.navbar')
 
-            @yield('content')
-        </main>
+            <main class="content">
+                @if (session('sukses'))
+                    <div class="alert alert-success" role="alert">
+                        @include('partials.icon', ['name' => 'check-circle'])
+                        <span>{{ session('sukses') }}</span>
+                        <button type="button" class="alert-close" aria-label="Tutup">&times;</button>
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="alert alert-error" role="alert">
+                        @include('partials.icon', ['name' => 'x-circle'])
+                        <span>{{ session('error') }}</span>
+                        <button type="button" class="alert-close" aria-label="Tutup">&times;</button>
+                    </div>
+                @endif
+
+                @yield('content')
+            </main>
+
+            @include('partials.footer')
+        </div>
     </div>
 
-    @include('partials.footer')
+    <div class="overlay" id="overlay"></div>
+    <script src="{{ asset('js/app.js') }}"></script>
 </body>
 </html>

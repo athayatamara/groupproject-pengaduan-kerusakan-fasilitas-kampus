@@ -1,17 +1,25 @@
-@php($role = session('role', 'pelapor'))
-<header class="navbar">
-    <a href="{{ route('dashboard') }}" class="brand">Lapor Fasilitas Kampus</a>
+@php
+    $pengguna = auth()->user();
+@endphp
+<header class="topbar">
+    <button type="button" class="menu-btn" id="menuBtn" aria-label="Buka menu">
+        @include('partials.icon', ['name' => 'menu'])
+    </button>
 
-    <div class="navbar-right">
-        {{-- SEMENTARA: tombol demo ganti role. Hapus setelah autentikasi dibuat --}}
-        <span class="demo">
-            Demo:
-            <a href="{{ route('demo.role', 'pelapor') }}">Pelapor</a> |
-            <a href="{{ route('demo.role', 'admin') }}">Admin</a>
-        </span>
+    <div class="topbar-title">@yield('title', 'Dashboard')</div>
 
-        <span class="user">{{ $role === 'admin' ? 'Admin Sarpras' : 'Athaya (Mahasiswa)' }}</span>
-        <a href="{{ route('profil.edit') }}">Profil</a>
-        {{-- Logout akan ditambahkan pada tahap autentikasi --}}
+    <div class="topbar-right">
+        <a href="{{ route('profil.edit') }}" class="user-chip" title="Profil saya">
+            <span class="avatar">{{ strtoupper(mb_substr($pengguna->name, 0, 1)) }}</span>
+            <span class="user-text">
+                <strong>{{ $pengguna->name }}</strong>
+                <small>{{ $pengguna->role_label }}</small>
+            </span>
+        </a>
+
+        <form action="{{ route('logout') }}" method="POST" class="logout-form">
+            @csrf
+            <button type="submit" class="btn btn-outline btn-sm">@include('partials.icon', ['name' => 'log-out']) <span class="logout-text">Keluar</span></button>
+        </form>
     </div>
 </header>

@@ -1,11 +1,11 @@
-@if ($status === 'selesai')
-    <span class="badge badge-selesai">Selesai</span>
-@elseif ($status === 'diproses')
-    <span class="badge badge-proses">Diproses</span>
-@elseif ($status === 'diverifikasi')
-    <span class="badge badge-proses">Diverifikasi</span>
-@elseif ($status === 'ditolak')
-    <span class="badge badge-tolak">Ditolak</span>
-@else
-    <span class="badge badge-tunggu">Menunggu</span>
-@endif
+@php
+    $peta = [
+        'menunggu' => ['Menunggu', 'warn'],
+        'diverifikasi' => ['Diverifikasi', 'info'],
+        'diproses' => ['Diproses', 'info'],
+        'selesai' => ['Selesai', 'ok'],
+        'ditolak' => ['Ditolak', 'bad'],
+    ];
+    [$teks, $kelas] = $peta[$status] ?? [ucfirst($status), 'gray'];
+@endphp
+<span class="badge badge-{{ $kelas }}">{{ $teks }}</span>
